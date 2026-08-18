@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+    <link rel="preload" href="/style.css" as="style">
+    <link rel="preload" href="/shared.js" as="script">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <title>commonware > Hush Money</title>
+    <meta name="description" content="Every private payment scheme ever
+built pays for privacy in one of three currencies: trusted parties,
+small anonymity sets, or scanning and state that grow with the chain. We
+map more than four decades of the literature into one DAG and trace the
+arcs bending toward the dream.">
+    <meta name="author" content="Guru Vamsi Policharla">
+    <meta name="keywords" content="commonware, open source, common goods, software, internet, ownership, trust, blockchain, decentralization, crypto">
+
+    <meta property="og:url" content="https://commonware.xyz/blogs/private-payments" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="commonware" />
+    <meta property="og:image" content="https://commonware.xyz/imgs/private-payments.png" />
+    <meta property="og:title" content="Hush Money" />
+    <meta property="og:description" content="Every private payment
+scheme ever built pays for privacy in one of three currencies: trusted
+parties, small anonymity sets, or scanning and state that grow with the
+chain. We map more than four decades of the literature into one DAG and
+trace the arcs bending toward the dream." />
+    <meta property="article:author" content="Guru Vamsi Policharla" />
+    <meta property="article:published_time" content="2026-08-18T00:00:00Z" />
+    <meta property="article:modified_time" content="2026-08-18T00:00:00Z" />
+
+    <link rel="canonical" href="https://commonware.xyz/blogs/private-payments" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="commonware.xyz" />
+    <meta property="twitter:url" content="https://commonware.xyz/blogs/private-payments" />
+    <meta property="twitter:title" content="Hush Money" />
+    <meta property="twitter:description" content="Every private payment
+scheme ever built pays for privacy in one of three currencies: trusted
+parties, small anonymity sets, or scanning and state that grow with the
+chain. We map more than four decades of the literature into one DAG and
+trace the arcs bending toward the dream." />
+    <meta property="twitter:image" content="https://commonware.xyz/imgs/private-payments.png" />
+    <meta property="twitter:site" content="@commonwarexyz" />
+        <meta property="twitter:creator" content="https://x.com/guruvamsip" />
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"
+        onload="document.querySelectorAll('.math').forEach(function (el) {
+            katex.render(el.textContent, el, {
+                displayMode: el.classList.contains('display'),
+                throwOnError: false
+            });
+        });"></script>
+    
+    <link rel="stylesheet" type="text/css" href="/style.css">
+</head>
+
+<body>
+    <div id="logo-placeholder">
+        <div class="logo-line">
+            <span class="edge-logo-symbol">+</span>
+            <span class="horizontal-logo-symbol">~</span>
+            <span class="horizontal-logo-symbol"> </span>
+            <span class="horizontal-logo-symbol">-</span>
+            <span class="horizontal-logo-symbol">+</span>
+            <span class="horizontal-logo-symbol">-</span>
+            <span class="horizontal-logo-symbol">+</span>
+            <span class="horizontal-logo-symbol"> </span>
+            <span class="horizontal-logo-symbol">-</span>
+            <span class="horizontal-logo-symbol">+</span>
+            <span class="horizontal-logo-symbol">-</span>
+            <span class="horizontal-logo-symbol">~</span>
+            <span class="horizontal-logo-symbol">~</span>
+            <span class="edge-logo-symbol">*</span>
+        </div>
+        <div class="logo-line">
+            <span class="vertical-logo-symbol">|</span>
+            <span class="logo-text"> commonware </span>
+            <span class="vertical-logo-symbol"> </span>
+        </div>
+        <div class="logo-line">
+            <span class="edge-logo-symbol">*</span>
+            <span class="horizontal-logo-symbol">~</span>
+            <span class="horizontal-logo-symbol">+</span>
+            <span class="horizontal-logo-symbol">+</span>
+            <span class="horizontal-logo-symbol">-</span>
+            <span class="horizontal-logo-symbol"> </span>
+            <span class="horizontal-logo-symbol">~</span>
+            <span class="horizontal-logo-symbol">-</span>
+            <span class="horizontal-logo-symbol">+</span>
+            <span class="horizontal-logo-symbol"> </span>
+            <span class="horizontal-logo-symbol">-</span>
+            <span class="horizontal-logo-symbol">*</span>
+            <span class="horizontal-logo-symbol">-</span>
+            <span class="edge-logo-symbol">+</span>
+        </div>
+    </div>
+    <div class="content">
+        <h1>Hush Money</h1>
+        <div class="meta">
+
+                        <div class="author">By <a href="https://x.com/guruvamsip">Guru
+Vamsi Policharla</a></div>
+                        <div class="date">August 18th, 2026</div>
+        </div>
+        <p>In <a href="/blogs/bte">earlier</a> <a
+        href="/blogs/pick-your-poisons">posts</a> we covered encrypted
+        mempools, which protect a transaction only until it is
+        finalized. Private payments are the harder problem: the origin,
+        destination, and amount of a transfer must stay hidden
+        <em>forever</em> – from the public, from the validators
+        executing it, and from counterparties beyond what their own view
+        already reveals – while everyone can still verify that no value
+        was created and nothing was spent twice. <a
+        href="https://eprint.iacr.org/2014/349">Zerocash</a> named the
+        three properties that a decentralized anonymous payment (DAP)
+        scheme must provide: <em>ledger indistinguishability</em>,
+        <em>transaction non-malleability</em>, and <em>balance</em>.</p>
+        <p>More than four decades of constructions – Chaumian e-cash,
+        accumulator coins, shielded pools, ring signatures, encrypted
+        account balances, regulated CBDCs – form a single family tree,
+        and every branch pays for privacy in one of three currencies. We
+        map the tree below, then walk the bill.</p>
+        <style>
+          .cw-magic-move {
+            --cw-magic-track-height: 1200vh;
+            height: var(--cw-magic-track-height);
+            margin: 44px 0 20px;
+            position: relative;
+          }
+
+          .cw-magic-final {
+            aspect-ratio: 1024 / 700;
+            margin: 20px 0;
+          }
+
+          .cw-magic-story-source,
+          .cw-magic-dream-source {
+            display: none;
+          }
+
+          @media (max-width: 600px) {
+            .cw-magic-move {
+              --cw-magic-track-height: 1150vh;
+            }
+          }
+        </style>
+        <div id="private-payments-magic-move" class="cw-magic-move" aria-label="Animated tour through the private payments landscape, from Chaumian e-cash to the three poisons every scheme picks from." role="region">
+          <noscript>
+            <style>
+              .cw-magic-move {
+                height: auto;
+                margin: 0;
+              }
+
+              .cw-magic-final {
+                aspect-ratio: auto;
+              }
+
+              .cw-magic-story-source,
+              .cw-magic-dream-source {
+                display: block;
+              }
+            </style>
+            This section contains an animated tour through the private payments landscape, from Chaumian e-cash to the three poisons every scheme picks from.
+          </noscript>
+        </div>
+        <script type="module" src="private-payments.magic-move.js"></script>
+        <div id="private-payments-story-source"
+        class="cw-magic-story-source">
+        <p>Private payments are as old as the field. <a
+        href="https://link.springer.com/chapter/10.1007/978-1-4757-0602-4_18">Cha82</a>
+        introduced blind signatures so a bank can sign a coin it never
+        sees, making withdrawals unlinkable from deposits at the cost of
+        an online double-spending check. <a
+        href="https://chaum.com/wp-content/uploads/2021/12/Untraceable_Electronic_Cash.pdf">CFN88</a>
+        took spending offline by secret-sharing the payer’s identity
+        into every coin: one spend reveals nothing, two spends reveal
+        the double-spender. <a
+        href="https://eprint.iacr.org/2005/060">CHL05</a> compressed a
+        wallet of <span class="math inline">2^{\ell}</span> coins into a
+        single CL signature – coin <span class="math inline">i</span> is
+        spent by revealing a serial number <span
+        class="math inline">F_s(i)</span> and a double-spending tag,
+        both PRF outputs proven correct in zero knowledge. The
+        PRF-derived serial number is the ancestor of every nullifier
+        that follows.</p>
+        <p><a
+        href="https://isi.jhu.edu/~mgreen/ZerocoinOakland.pdf">MGGR13</a>
+        removed the bank. A zerocoin is a Pedersen commitment to a
+        serial number, minted into a public RSA accumulator and spent by
+        revealing the serial number with a zero-knowledge proof of
+        accumulator membership. The membership proof hides which coin is
+        being redeemed; the revealed serial number replaces the bank’s
+        list of deposited coins. But spend proofs exceeded 45 KB,
+        denominations were fixed, and recipients and amounts stayed
+        public – a decentralized mix, not yet a payment system.</p>
+        <p><a href="https://eprint.iacr.org/2014/349">BCGGMTV14</a>
+        formalized <em>decentralized anonymous payment (DAP)
+        schemes</em> and gave the construction that still defines the
+        space. Coins are commitments in a Merkle tree; a <em>pour</em>
+        transaction consumes up to two coins and creates up to two new
+        ones, revealing only serial numbers <span
+        class="math inline">\mathsf{sn} =
+        \mathsf{PRF}_{a_{\mathsf{sk}}}(\rho)</span> and a zk-SNARK
+        proving membership, correct derivation, and value conservation.
+        Pours are under 1 kB and verify in under 6 ms, and the anonymity
+        set is every coin ever created. Three costs are baked in: the
+        SNARK needs a trusted setup, recipients must trial-decrypt the
+        entire chain, and the nullifier set grows forever.</p>
+        <p>Zcash deployed the DAP scheme and spent a decade paying down
+        its debts. Sprout’s BCTV14 parameters harbored a counterfeiting
+        vulnerability (CVE-2019-7167) found by <a
+        href="https://eprint.iacr.org/2019/119">Gab19</a>; <a
+        href="https://zips.z.cash/protocol/protocol.pdf">Sapling</a>
+        moved to Groth16 with diversified payment addresses and viewing
+        keys; Orchard eliminated the ceremony entirely by moving to Halo
+        2 – descended from <a
+        href="https://eprint.iacr.org/2019/1021">Halo</a>’s recursive
+        proof composition – whose inner-product-argument polynomial
+        commitment needs no trusted setup. The deployed anonymity set
+        proved smaller than the definitional one: round-trip heuristics
+        linked 31.5% of coins entering the pool (<a
+        href="https://arxiv.org/abs/1712.01210">Que17</a>, <a
+        href="https://www.usenix.org/conference/usenixsecurity18/presentation/kappos">KYMM18</a>),
+        and the PING and REJECT attacks (<a
+        href="https://eprint.iacr.org/2020/220">TBP20</a>) identified
+        payees remotely from trial-decryption timing.</p>
+        <p>A parallel thread hid only amounts. Confidential Transactions
+        (<a
+        href="https://www.weusecoins.com/confidential-transactions/">Max15</a>)
+        replace values with Pedersen commitments plus range proofs, and
+        <a href="https://eprint.iacr.org/2017/1066">Bulletproofs</a>
+        shrank a 64-bit range proof to 672 bytes (<span
+        class="math inline">2\log_2{n} + 9</span> group and field
+        elements) with no trusted setup. Mimblewimble (<a
+        href="https://docs.beam.mw/Mimblewimble.pdf">Jed16</a>,
+        formalized in <a
+        href="https://download.wpsoftware.net/bitcoin/wizardry/mimblewimble.pdf">Poe16</a>)
+        pushed CT to its logical end – a scriptless ledger of
+        commitments and transaction kernels where <em>cut-through</em>
+        prunes spent outputs – and <a
+        href="https://eprint.iacr.org/2018/1039">FOS19</a> formalized it
+        as an <em>aggregate cash system</em> with inflation resistance
+        and resistance to coin theft. Amounts vanish; the transaction
+        graph does not.</p>
+        <p><a
+        href="https://bytecoin.org/old/whitepaper.pdf">CryptoNote</a>
+        fixed Bitcoin’s two leaks with one-time addresses for recipients
+        and one-time ring signatures for senders, publishing a <em>key
+        image</em> to catch double spends – the <a
+        href="https://eprint.iacr.org/2004/027">LSAG</a> tag in
+        disguise. RingCT (<a
+        href="https://eprint.iacr.org/2015/1098">Noe16</a>) layered
+        Pedersen commitments and commitments-to-zero into the MLSAG
+        signature so amounts, origins, and destinations are all hidden;
+        <a href="https://eprint.iacr.org/2019/654">CLSAG</a> halved it.
+        But signatures are linear in ring size, so Monero’s rings froze
+        at 11, then 16 – and zero-mixin chain reactions (<a
+        href="https://petsymposium.org/popets/2018/popets-2018-0025.php">MSH+18</a>),
+        guess-newest age heuristics, and the March 2024 black-marble
+        flood (<a
+        href="https://rucknium.me/html/monero-black-marble-flood.pdf">Ruc24</a>)
+        showed how cheaply a fixed decoy set is degraded, or simply
+        bought.</p>
+        <p>The sub-linear line descends from one-out-of-many proofs (<a
+        href="https://eprint.iacr.org/2014/764">GK15</a>): a <span
+        class="math inline">\Sigma</span>-protocol showing that one of
+        <span class="math inline">N</span> commitments opens to zero,
+        with <span class="math inline">O(\log{N})</span> proof size.
+        Lelantus (<a href="https://eprint.iacr.org/2019/373">Jiv19</a>)
+        built burn-and-redeem payments on it; Omniring (<a
+        href="https://eprint.iacr.org/2019/580">LRRSTW19</a>) gave
+        RingCT formal foundations with log-size proofs and a single ring
+        shared by all inputs; Triptych (<a
+        href="https://eprint.iacr.org/2020/018">NG20</a>) made linkable
+        ring signatures logarithmic. Every descendant hit the same wall:
+        verification linear in the anonymity set, capping deployed sets
+        near <span class="math inline">2^{16}</span>.</p>
+        <p>Curve trees (<a
+        href="https://eprint.iacr.org/2022/756">CHK23</a>) broke the
+        wall: a transparent zero-knowledge accumulator built from
+        shallow Merkle trees of Pedersen commitments over a 2-cycle of
+        elliptic curves, proved with <em>select-and-rerandomize</em>
+        relations in Bulletproofs-style circuits – membership proofs of
+        a few KB for sets beyond <span
+        class="math inline">2^{32}</span>. <a
+        href="https://gist.github.com/kayabaNerve/0e1f7719e5797c826b87249f21ab6f86">FCMP++</a>
+        retrofits this onto Monero’s existing outputs using Generalized
+        Bulletproofs and Eagen’s divisor technique (<a
+        href="https://eprint.iacr.org/2022/596">Eag22</a>) while
+        preserving legacy key images: the anonymity set becomes the
+        entire chain, ending the decoy era.</p>
+        <p>The account model answered differently. Quisquis (<a
+        href="https://eprint.iacr.org/2018/990">FMMO19</a>) gives
+        accounts <em>updatable public keys</em>: a transaction consumes
+        sender, receiver, and decoys and re-emits all of them
+        re-randomized, so each address appears on the blockchain at most
+        twice and there is no ever-growing set of unspent outputs – at
+        the price of proofs linear in the decoy set and races on
+        overlapping decoys. Zether (<a
+        href="https://eprint.iacr.org/2019/191">BAZB20</a>) keeps
+        balances as exponent-ElGamal ciphertexts inside a smart contract
+        and tames concurrency with <em>epochs</em>, <em>pending
+        transfers</em>, and <em>rollover</em>, proving statements over
+        ciphertexts with <span
+        class="math inline">\Sigma</span>-Bullets; many-out-of-many
+        proofs (<a href="https://eprint.iacr.org/2020/293">Dia21</a>)
+        made its anonymous variant logarithmic in the ring of accounts.
+        The same twisted ElGamal machinery (<a
+        href="https://eprint.iacr.org/2019/319">CMTA19</a>) now runs
+        Solana’s confidential transfers – whose 2025 Fiat-Shamir
+        “phantom challenge” bug is a reminder of where <span
+        class="math inline">\Sigma</span>-protocol stacks go to die.</p>
+        <p>Permissioned designs keep the trust topology of existing
+        finance and make it verifiable. Solidus (<a
+        href="https://eprint.iacr.org/2017/317">CZJKJS17</a>) hides the
+        transaction graph inside a publicly-verifiable oblivious RAM
+        machine (PVORM) per bank; zkLedger (<a
+        href="https://eprint.iacr.org/2018/241">NVV18</a>) writes a
+        commitment entry for <em>every</em> bank into every row of the
+        ledger so no bank can omit transactions from an audit, and audit
+        tokens let an auditor extract provably complete answers.</p>
+        <p>The CBDC wave modernizes Chaum with threshold trust. UTT (<a
+        href="https://eprint.iacr.org/2022/452">TBAAGPY22</a>)
+        thresholdizes the bank, auditor, and registrar over BFT
+        infrastructure and prices anonymity itself: <em>anonymity
+        budgets</em> cap the value a user can send privately per month.
+        Platypus (<a
+        href="https://eprint.iacr.org/2021/1443">WKDC22</a>) combines
+        e-cash’s transaction processing with account commitments so
+        holding and receiving limits become extra ZK conjuncts on each
+        state transition; PEReDi (<a
+        href="https://eprint.iacr.org/2022/974">SKK22</a>) distributes
+        the operator into a quorum of maintainers with threshold tracing
+        and privacy revocation, proven in the UC framework.</p>
+        <p>Compliance for permissionless pools split on one question:
+        does anyone hold a de-anonymization trapdoor? <a
+        href="https://eprint.iacr.org/2016/061">GGM16</a> put policies –
+        coin tracing, user tracing, spending limits, tax payments –
+        inside the Zerocash pour circuit, decryptable by an authority.
+        After Tornado Cash was sanctioned, the trapdoor-free line won
+        deployment: proofs of innocence, then Privacy Pools (<a
+        href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4563364">BINSS23</a>),
+        where each withdrawal carries a membership or exclusion proof
+        against a curated <em>association set</em>, and Derecho’s
+        proof-carrying disclosures (<a
+        href="https://eprint.iacr.org/2023/273">BF23</a>) propagate such
+        attestations through the pool’s internal transaction graph.</p>
+        <p>Someone still has to notice they got paid. Trial decryption
+        costs <span class="math inline">O(\mathsf{chain})</span> per
+        wallet and leaks timing; view tags shave constants. Fuzzy
+        message detection (<a
+        href="https://eprint.iacr.org/2021/089">BLMG21</a>) outsources
+        detection to an untrusted server at a tunable false-positive
+        rate <span class="math inline">p</span> – statistically brittle
+        under intersection attacks (<a
+        href="https://eprint.iacr.org/2021/1180">SPB21</a>). Oblivious
+        message retrieval (<a
+        href="https://eprint.iacr.org/2021/1256">LT22</a>) gets full
+        privacy from a single untrusted detector that homomorphically
+        packs pertinent messages into an encrypted digest, at <span
+        class="math inline">\Theta(N)</span> FHE cost. Tachyon (<a
+        href="https://seanbowe.com/blog/tachyon-scaling-zcash-oblivious-synchronization/">Bow25</a>)
+        exits the game entirely: out-of-band payments, wallet state
+        carried as proof-carrying data, and <em>oblivious
+        synchronization</em> make wallet cost proportional to the
+        wallet’s own activity rather than global chain activity.</p>
+        </div>
+        <div id="private-payments-dream-source"
+        class="cw-magic-dream-source">
+        <p>Every corner of the map pays in at least one of three
+        currencies: trusted parties, small anonymity sets, or scanning
+        and state that grow with the chain.</p>
+        <p><span id="dream-goal">The dream</span> is:</p>
+        <div data-align="center">
+        <blockquote>
+        <p><em>A private payment scheme with an anonymity set equal to
+        the whole chain, no trusted issuer or setup, recipient cost
+        proportional to a wallet’s own activity, bounded validator
+        state, concurrent account-style usage, and accountability
+        without a de-anonymization trapdoor – ideally against a quantum
+        adversary</em></p>
+        </blockquote>
+        </div>
+        <p>No construction gets all of it. But three arcs are bending
+        toward it.</p>
+        </div>
+        <h2 id="poison-one-trusted-parties">Poison One: Trusted
+        Parties</h2>
+        <p>The Chaumian line trusts a mint. Blindness means the bank
+        <em>cannot</em> trace – but blind issuance also means
+        over-issuance is not publicly auditable, which is exactly the
+        failure Zerocoin’s public validity proofs were built to remove.
+        The modern permissioned answer is to thresholdize the authority
+        rather than delete it: <a
+        href="https://eprint.iacr.org/2022/452">UTT</a> splits bank,
+        auditor, and registration across a BFT committee, <a
+        href="https://eprint.iacr.org/2022/974">PEReDi</a> requires a
+        quorum of maintainers for tracing or revocation, and <a
+        href="https://petsymposium.org/popets/2023/popets-2023-0116.pdf">RP23</a>-style
+        threshold issuance decentralizes the mint itself. The governance
+        of those key shares – not the cryptography – becomes the real
+        policy question.</p>
+        <p>Permissionless designs smuggle the trusted party back in
+        through the proof system. Sprout’s ceremony ran with six
+        participants; its BCTV14 CRS carried redundant elements that
+        enabled proofs “for any public input” – silent, unbounded
+        counterfeiting (<a
+        href="https://eprint.iacr.org/2019/119">Gab19</a>), fixed by new
+        Groth16 parameters at Sapling, with a turnstile bounding any
+        counterfeit already in the old pool. The <a
+        href="https://eprint.iacr.org/2017/1050">Powers of Tau</a> MPC
+        scaled trust to 1-of-<span class="math inline">n</span> over ~90
+        contributors, and <a
+        href="https://eprint.iacr.org/2019/1021">Halo</a> removed the
+        ceremony altogether. The 2026 rhyme: a previously undisclosed
+        bug in the Orchard circuit forced the Ironwood upgrade to seal
+        the old pool behind a supply-verifying turnstile. The lesson
+        generalizes – in any shielded pool, soundness cannot be audited
+        from the ledger, so deployments need turnstiles between pools
+        regardless of how the parameters were made.</p>
+        <h2 id="poison-two-small-anonymity-sets">Poison Two: Small
+        Anonymity Sets</h2>
+        <p>Decoy sets have a statistical half-life. Roughly two-thirds
+        of pre-2017 Monero inputs were spent with zero mixins, and
+        chain-reaction elimination resolved most of the rest (<a
+        href="https://eprint.iacr.org/2017/338">KFTS17</a>, <a
+        href="https://petsymposium.org/popets/2018/popets-2018-0025.php">MSH+18</a>);
+        the fix – sampling decoys from an estimated spend-age
+        distribution – still leaks a multiple-fold advantage over the
+        nominal <span class="math inline">1/16</span> guessing baseline
+        (<a
+        href="https://www.getmonero.org/2025/04/05/ospead-optimal-ring-signature-research.html">OSPEAD</a>).
+        Worse, a fixed-size decoy set is <em>purchasable</em>: during
+        the March 2024 flood, transaction volume jumped ~6x and the
+        flooder’s own outputs became known-not-decoys (“black marbles”)
+        inside everyone else’s rings (<a
+        href="https://rucknium.me/html/monero-black-marble-flood.pdf">Ruc24</a>).
+        Interactive adversaries do better still, intersecting rings
+        across known endpoints (the EAE/EABE pattern). <a
+        href="https://gist.github.com/kayabaNerve/0e1f7719e5797c826b87249f21ab6f86">FCMP++</a>
+        ends this arms race by making the anonymity set the chain – an
+        attacker cannot own a meaningful fraction of all historical
+        outputs – though endpoint metadata (exchange records, timing,
+        amounts) survives any on-chain set.</p>
+        <p>Account-model schemes rent the same poison in different
+        clothes. Anonymous Zether’s ring of accounts costs the verifier
+        linear work in <span class="math inline">N</span>, capping
+        practical rings; <a
+        href="https://eprint.iacr.org/2023/1948">PriDe CT</a> simplifies
+        the proofs and batches multiple receivers but keeps the explicit
+        ring; Quisquis-style decoy redistribution avoids growing state
+        but invites races on overlapping decoy accounts, a friction <a
+        href="https://eprint.iacr.org/2024/903">Nopenena</a> attacks
+        with small decoy sets engineered against graph analysis. The
+        escape hatch here is expensive: <a
+        href="https://eprint.iacr.org/2023/710">PriFHEte</a> shows
+        account-model <em>full privacy</em> – anonymity set equal to all
+        accounts – is possible by homomorphically updating every account
+        per transaction, a feasibility result whose validator cost is
+        linear in the user population.</p>
+        <h2 id="poison-three-scanning-and-state">Poison Three: Scanning
+        and State</h2>
+        <p>A global anonymity set sends two bills. The recipient’s bill
+        is detection: every wallet trial-decrypts every output, which is
+        <span class="math inline">O(\mathsf{chain})</span> bandwidth and
+        compute, and the detection loop itself is a side channel – <a
+        href="https://eprint.iacr.org/2020/220">TBP20</a> identified the
+        payee of any shielded transaction from ping timing. The
+        outsourcing ladder trades trust against leakage against cost: <a
+        href="https://eprint.iacr.org/2021/089">FMD</a>’s detection keys
+        leak a tunable-but-brittle false-positive haze; <a
+        href="https://www.usenix.org/conference/usenixsecurity22/presentation/madathil">Private
+        Signaling</a> gets exact detection from a TEE or two
+        non-colluding servers; <a
+        href="https://eprint.iacr.org/2021/1256">OMR</a> needs only a
+        single untrusted detector under LWE, with <a
+        href="https://eprint.iacr.org/2024/204">PerfOMR</a> cutting its
+        constants and snake-eye-resistant encryption (<a
+        href="https://link.springer.com/chapter/10.1007/978-3-031-91131-6_5">LSTW25</a>)
+        closing clue-collision DoS. No scheme escapes total server work
+        linear in the board – the frontier is constants and trust, not
+        asymptotics.</p>
+        <p>The validator’s bill is state: commitments and nullifiers can
+        never be deleted, because the design hides exactly which outputs
+        died. Mimblewimble’s cut-through, Quisquis’s non-increasing
+        state, and randomized-binning proposals like <a
+        href="https://eprint.iacr.org/2025/1124">Toxic Decoys</a> each
+        bound state by weakening or restructuring the hidden-spend
+        property. <a
+        href="https://seanbowe.com/blog/tachyon-scaling-zcash-oblivious-synchronization/">Tachyon</a>
+        is the most radical settlement of both bills at once: notes are
+        delivered out-of-band, wallets carry proofs of their own state,
+        nullifiers evolve unlinkably so untrusted services can prove
+        non-spentness obliviously, and full nodes prune history – wallet
+        and validator costs track the wallet’s own activity, and the
+        trial-decryption side channel disappears structurally.</p>
+        <h2 id="the-fourth-axis-accountability">The Fourth Axis:
+        Accountability</h2>
+        <p>Compliance mechanisms divide on whether anyone holds a
+        de-anonymization capability. Authority-held: <a
+        href="https://eprint.iacr.org/2016/061">GGM16</a>‘s in-circuit
+        policies with tracing keys, <a
+        href="https://eprint.iacr.org/2022/974">PEReDi</a>’s threshold
+        tracing, escrowed selective de-anonymization, and – the
+        quantitative middle ground – <a
+        href="https://eprint.iacr.org/2026/1118">AuditPay</a>’s
+        <em>auditing budget</em>, which rate-limits how many addresses
+        an auditor can monitor per epoch without users learning which.
+        User-held: viewing keys and payment disclosures, <a
+        href="https://eprint.iacr.org/2022/452">UTT</a>’s anonymity
+        budgets, and the provenance line – proofs of innocence, <a
+        href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4563364">Privacy
+        Pools</a>’ association sets (deployed on mainnet in 2025), <a
+        href="https://eprint.iacr.org/2023/273">Derecho</a>’s
+        proof-carrying disclosures, and <a
+        href="https://arxiv.org/abs/2606.10172">Proof of Source of
+        Funds</a>, which proves a payload is funded by compliant value
+        flowing from committed origins while hiding the entire
+        intermediate graph.</p>
+        <p>The provenance line holds no trapdoor at all, which is why it
+        won permissionless deployment after the Tornado Cash sanction.
+        Its price is paid in the second poison: your effective anonymity
+        set is not the pool but the association set you can prove
+        membership in, and intersections across withdrawals leak.
+        Compliance overlays do not remove a poison; they choose which
+        one to deepen.</p>
+        <h2 id="three-arcs-one-missing">Three Arcs, One Missing</h2>
+        <p>Three arcs are converging on the dream. Anonymity sets are
+        going full-chain: FCMP++ cleared its proof-system audits, ran a
+        public testnet from October 2025 and a stressnet from May 2026,
+        with the mainnet hard fork expected to follow (no activation
+        height set as of this writing). Proving is going client-side and
+        synchronization oblivious: Tachyon targets Zcash’s next upgrade,
+        Aztec proves private execution client-side, and the OMR line
+        keeps cutting the detector’s constants. And compliance is going
+        zero-knowledge, from association sets to budgeted auditors.</p>
+        <p>The fourth arc is conspicuously unfinished: post-quantum. <a
+        href="https://eprint.iacr.org/2019/1287">MatRiCT</a> and its
+        successor brought lattice RingCT from megabytes to tens of KB
+        but kept ring-bounded anonymity; <a
+        href="https://eprint.iacr.org/2021/564">SMILE</a> showed
+        logarithmic-size lattice set membership – a 22 KB ring signature
+        over a <span class="math inline">2^{25}</span>-element set – but
+        was never built into a payment system; FCMP++ is explicitly
+        <em>not</em> post-quantum sound. And unlike soundness, privacy
+        cannot wait for the threat to materialize: everything encrypted
+        onto a ledger today is a harvest-now-decrypt-later plaintext.
+        This is the gap our recent work <a
+        href="https://eprint.iacr.org/2026/015">Qurrency</a> targets – a
+        UTXO-based token system that is simultaneously private against
+        quantum adversaries and auditable, practical enough to run on
+        EVM chains.</p>
+        <div id="private-payments-frontier" class="cw-magic-final" role="region" aria-label="The private payments landscape extended with post-quantum constructions.">
+          <noscript>
+            This section contains a figure extending the private payments landscape with post-quantum constructions.
+          </noscript>
+        </div>
+        <p>As of this writing, no construction achieves <a
+        href="#dream-goal">the dream</a>. Every deployment picks its
+        poisons – and the most interesting work in the field is
+        whichever arc is bending yours.</p>
+        <div id="footer-placeholder"></div>
+        <script src="/shared.js"></script>
+</body>
+
+</html>
