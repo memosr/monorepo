@@ -280,14 +280,16 @@ Vamsi Policharla</a></div>
         ring signatures logarithmic. Every descendant hit the same wall:
         verification linear in the anonymity set, capping deployed sets
         near <span class="math inline">2^{16}</span>.</p>
-        <p>Curve trees (<a
-        href="https://eprint.iacr.org/2022/756">CHK23</a>) broke the
-        wall: a transparent zero-knowledge accumulator built from
-        shallow Merkle trees of Pedersen commitments over a 2-cycle of
-        elliptic curves, proved with <em>select-and-rerandomize</em>
-        relations in Bulletproofs-style circuits – membership proofs of
-        a few KB for sets beyond <span
-        class="math inline">2^{32}</span>. <a
+        <p>Veksel (<a href="https://eprint.iacr.org/2021/327">CH22</a>)
+        showed the way around the wall: build payments from a proof that
+        a homomorphic commitment is a <em>rerandomization</em> of a
+        commitment from a set, without revealing which one. Curve trees
+        (<a href="https://eprint.iacr.org/2022/756">CHK23</a>) scaled
+        the idea into a transparent zero-knowledge accumulator – shallow
+        Merkle trees of Pedersen commitments over a 2-cycle of elliptic
+        curves, proved with <em>select-and-rerandomize</em> relations in
+        Bulletproofs-style circuits – giving membership proofs of a few
+        KB for sets beyond <span class="math inline">2^{32}</span>. <a
         href="https://gist.github.com/kayabaNerve/0e1f7719e5797c826b87249f21ab6f86">FCMP++</a>
         retrofits this onto Monero’s existing outputs using Generalized
         Bulletproofs and Eagen’s divisor technique (<a
@@ -336,7 +338,13 @@ Vamsi Policharla</a></div>
         state transition; PEReDi (<a
         href="https://eprint.iacr.org/2022/974">SKK22</a>) distributes
         the operator into a quorum of maintainers with threshold tracing
-        and privacy revocation, proven in the UC framework.</p>
+        and privacy revocation, proven in the UC framework. The same
+        machinery extends outward: PARScoin (<a
+        href="https://eprint.iacr.org/2023/1908">SKK23</a>) to
+        fiat-backed stablecoins, and DART (<a
+        href="https://eprint.iacr.org/2025/239">SKKK25</a>) to anonymous
+        multi-asset tokenization with asset-specific auditors whose
+        identities themselves stay hidden.</p>
         <p>Compliance for permissionless pools split on one question:
         does anyone hold a de-anonymization trapdoor? <a
         href="https://eprint.iacr.org/2016/061">GGM16</a> put policies –
@@ -364,11 +372,14 @@ Vamsi Policharla</a></div>
         privacy from a single untrusted detector that homomorphically
         packs pertinent messages into an encrypted digest, at <span
         class="math inline">\Theta(N)</span> FHE cost. Tachyon (<a
-        href="https://seanbowe.com/blog/tachyon-scaling-zcash-oblivious-synchronization/">Bow25</a>)
-        exits the game entirely: out-of-band payments, wallet state
-        carried as proof-carrying data, and <em>oblivious
-        synchronization</em> make wallet cost proportional to the
-        wallet’s own activity rather than global chain activity.</p>
+        href="https://seanbowe.com/blog/tachyon-scaling-zcash-oblivious-synchronization/">Bow25</a>,
+        formalized in <a
+        href="https://eprint.iacr.org/2025/2031">BM25</a>) exits the
+        game entirely: out-of-band payments, wallet state carried as
+        proof-carrying data, <em>evolving nullifiers</em>, and
+        <em>oblivious synchronization</em> make wallet cost proportional
+        to the wallet’s own activity rather than global chain
+        activity.</p>
         </div>
         <div id="private-payments-dream-source"
         class="cw-magic-dream-source">
@@ -484,7 +495,12 @@ Vamsi Policharla</a></div>
         href="https://link.springer.com/chapter/10.1007/978-3-031-91131-6_5">LSTW25</a>)
         closing clue-collision DoS. No scheme escapes total server work
         linear in the board – the frontier is constants and trust, not
-        asymptotics.</p>
+        asymptotics. OCash (<a
+        href="https://eprint.iacr.org/2024/246">HNS24</a>) attacks the
+        reader’s side of the ledger instead: payments are shuffled on
+        chain so that a light client knows a few positions among which
+        to find its payment, staying anonymous even against the full
+        nodes it reads through.</p>
         <p>The validator’s bill is state: commitments and nullifiers can
         never be deleted, because the design hides exactly which outputs
         died. Mimblewimble’s cut-through, Quisquis’s non-increasing
@@ -496,8 +512,10 @@ Vamsi Policharla</a></div>
         is the most radical settlement of both bills at once: notes are
         delivered out-of-band, wallets carry proofs of their own state,
         nullifiers evolve unlinkably so untrusted services can prove
-        non-spentness obliviously, and full nodes prune history – wallet
-        and validator costs track the wallet’s own activity, and the
+        non-spentness obliviously, and validators permanently prune the
+        nullifier set (<a
+        href="https://eprint.iacr.org/2025/2031">BM25</a>) – wallet and
+        validator costs track the wallet’s own activity, and the
         trial-decryption side channel disappears structurally.</p>
         <h2 id="the-fourth-axis-accountability">The Fourth Axis:
         Accountability</h2>

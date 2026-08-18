@@ -19,10 +19,10 @@ const BOXES = [
   { id: 'cbdc', title: 'Regulated E-Cash / CBDC', papers: 'TBAAGPY22, WKDC22, SKK22', slide1: { x: 20, y: 74 }, slide2: { x: LEFT_COLUMN_X, y: 50 } },
   { id: 'shielded', title: 'Zcash Shielded Pools', papers: 'HBHW16, BGH19', slide1: { x: 43, y: 46 }, slide2: { x: RIGHT_COLUMN_X, y: 37 } },
   { id: 'zether', title: '(Anonymous) Zether', papers: 'BAZB20, Dia21', slide1: { x: 69, y: 46 }, slide2: { x: MIDDLE_COLUMN_X, y: 50 } },
-  { id: 'fcmp', title: 'Full-Chain Membership Proofs', papers: 'CHK23, Par24', slide1: { x: 81, y: 60 }, slide2: { x: RIGHT_COLUMN_X, y: 50 } },
+  { id: 'fcmp', title: 'Full-Chain Membership Proofs', papers: 'CH22, CHK23, Par24', slide1: { x: 81, y: 60 }, slide2: { x: RIGHT_COLUMN_X, y: 50 } },
   { id: 'quisquis', title: 'Quisquis', papers: 'FMMO19', slide1: { x: 14, y: 60 }, slide2: { x: MIDDLE_COLUMN_X, y: 63 } },
   { id: 'acc', title: 'Accountable Privacy', papers: 'GGM16, BINSS23', slide1: { x: 45, y: 60 }, slide2: null },
-  { id: 'det', title: 'Oblivious Message Detection', papers: 'BLMG21, LT22, Bow25', slide1: { x: 66, y: 74 }, slide2: null },
+  { id: 'det', title: 'Oblivious Message Detection', papers: 'BLMG21, LT22, Bow25, BM25', slide1: { x: 66, y: 74 }, slide2: null },
 ];
 
 const EPRINT_URLS = {
@@ -52,6 +52,7 @@ const EPRINT_URLS = {
   BGH19: 'https://eprint.iacr.org/2019/1021',
   BAZB20: 'https://eprint.iacr.org/2019/191',
   Dia21: 'https://eprint.iacr.org/2020/293',
+  CH22: 'https://eprint.iacr.org/2021/327',
   CHK23: 'https://eprint.iacr.org/2022/756',
   Par24: 'https://gist.github.com/kayabaNerve/0e1f7719e5797c826b87249f21ab6f86',
   FMMO19: 'https://eprint.iacr.org/2018/990',
@@ -60,6 +61,7 @@ const EPRINT_URLS = {
   BLMG21: 'https://eprint.iacr.org/2021/089',
   LT22: 'https://eprint.iacr.org/2021/1256',
   Bow25: 'https://seanbowe.com/blog/tachyon-scaling-zcash-oblivious-synchronization/',
+  BM25: 'https://eprint.iacr.org/2025/2031',
   EZSLL19: 'https://eprint.iacr.org/2019/1287',
   LNS21: 'https://eprint.iacr.org/2021/564',
   CGGLLMPZ26: 'https://eprint.iacr.org/2026/015',
