@@ -8,7 +8,7 @@ use crate::{
     qmdb::{
         Error,
         any::{ValueEncoding, batch::lookup_sorted},
-        batch_chain::{self, Bounds, Commitment},
+        batch_chain::{self, Bounds, Commitment, OnChain},
         immutable::operation::Operation,
         operation::Key,
     },
@@ -36,6 +36,9 @@ pub(crate) struct DiffEntry<F: Family, V> {
 ///
 /// Consuming [`UnmerkleizedBatch::merkleize`] produces an `Arc<MerkleizedBatch>`.
 /// Methods that need the committed DB (e.g. [`get`](Self::get)) accept it as a parameter.
+/// Every method that reads the committed DB first checks that the database is on this
+/// chain's own states and refuses with [`crate::qmdb::Error::StaleRead`] otherwise (see
+/// [`crate::qmdb::batch_chain`]).
 #[allow(clippy::type_complexity)]
 pub struct UnmerkleizedBatch<F, H, K, V, S: Strategy>
 where
@@ -62,7 +65,9 @@ where
 type JournalBatch<F, D, K, V, S> = Arc<authenticated::MerkleizedBatch<F, D, Operation<F, K, V>, S>>;
 
 /// A speculative batch of operations whose root digest has been computed,
-/// in contrast to [`UnmerkleizedBatch`].
+/// in contrast to [`UnmerkleizedBatch`]. Reads through it refuse with
+/// [`crate::qmdb::Error::StaleRead`] once a batch from a different fork is applied
+/// (see [`crate::qmdb::batch_chain`]).
 #[derive(Clone)]
 pub struct MerkleizedBatch<F: Family, D: Digest, K: Key, V: ValueEncoding, S: Strategy> {
     /// Authenticated journal batch (Merkle state + local items).
@@ -120,6 +125,25 @@ where
             .map_or(self.base, |parent| parent.bounds.db)
     }
 
+    /// Check that the live database is on this chain's own states before a committed read
+    /// (see [`Bounds::on_chain`]).
+    #[allow(clippy::type_complexity)]
+    fn on_chain<'a, E, C, T>(
+        &self,
+        db: &'a Immutable<F, E, K, V, C, H, T, S>,
+    ) -> Result<OnChain<'a, Immutable<F, E, K, V, C, H, T, S>>, Error<F>>
+    where
+        E: Context,
+        C: Mutable<Item = Operation<F, K, V>>,
+        C::Item: EncodeShared,
+        T: Translator,
+    {
+        self.parent.as_ref().map_or_else(
+            || self.base.on_chain(db, db.commitment()),
+            |parent| parent.bounds.on_chain(db, db.commitment()),
+        )
+    }
+
     /// Set a key to a value.
     ///
     /// If the key already exists in the database or an ancestor batch, reads
@@ -141,6 +165,7 @@ where
         C::Item: EncodeShared,
         T: Translator,
     {
+        let db = self.on_chain(db)?;
         // Check this batch's pending mutations.
         if let Some(value) = self.mutations.get(key) {
             return Ok(Some(value.clone()));
@@ -175,6 +200,7 @@ where
         C::Item: EncodeShared,
         T: Translator,
     {
+        let db = self.on_chain(db)?;
         if keys.is_empty() {
             return Ok(Vec::new());
         }
@@ -233,18 +259,20 @@ where
     /// `inactivity_floor` declares that all operations before this location are inactive.
     /// It must be >= the database's current inactivity floor (monotonically non-decreasing).
     #[tracing::instrument(name = "qmdb.immutable.batch.merkleize", level = "info", skip_all)]
+    #[allow(clippy::type_complexity)]
     pub async fn merkleize<E, C, T>(
         self,
         db: &Immutable<F, E, K, V, C, H, T, S>,
         metadata: Option<V::Value>,
         inactivity_floor: Location<F>,
-    ) -> Arc<MerkleizedBatch<F, H::Digest, K, V, S>>
+    ) -> Result<Arc<MerkleizedBatch<F, H::Digest, K, V, S>>, Error<F>>
     where
         E: Context,
         C: Mutable<Item = Operation<F, K, V>>,
         C::Item: EncodeShared,
         T: Translator,
     {
+        let db = self.on_chain(db)?;
         let base = self.base.size;
 
         let live_ancestors: Vec<_> =
@@ -291,7 +319,7 @@ where
             });
         }
 
-        Arc::new(MerkleizedBatch {
+        Ok(Arc::new(MerkleizedBatch {
             journal_batch: journal,
             diff: Arc::new(diff),
             parent: self.parent.as_ref().map(Arc::downgrade),
@@ -303,7 +331,7 @@ where
                 ancestors,
                 inactivity_floor,
             },
-        })
+        }))
     }
 }
 
@@ -344,6 +372,7 @@ where
         H: Hasher<Digest = D>,
         T: Translator,
     {
+        let db = self.bounds.on_chain(db, db.commitment())?;
         if let Some(entry) = lookup_sorted(self.diff.as_slice(), key) {
             return Ok(Some(entry.value.clone()));
         }
@@ -370,6 +399,7 @@ where
         H: Hasher<Digest = D>,
         T: Translator,
     {
+        let db = self.bounds.on_chain(db, db.commitment())?;
         if keys.is_empty() {
             return Ok(Vec::new());
         }
