@@ -222,6 +222,14 @@ mod test {
     }
 
     #[test_traced("INFO")]
+    fn test_keyless_db_snapshot() {
+        deterministic::Runner::default().start(|ctx| async move {
+            let db = open_db::<mmr::Family>(ctx.child("storage")).await;
+            tests::test_keyless_db_snapshot(db).await;
+        });
+    }
+
+    #[test_traced("INFO")]
     fn test_keyless_db_proof_comprehensive() {
         deterministic::Runner::default().start(|ctx| async move {
             let db = open_db::<mmr::Family>(ctx.child("storage")).await;
@@ -250,6 +258,7 @@ mod test {
     #[test_traced("INFO")]
     fn test_keyless_historical_proof_floor_pruned() {
         use crate::merkle::Location;
+
         deterministic::Runner::default().start(|ctx| async move {
             let mut db = open_db::<mmr::Family>(ctx.child("db")).await;
 

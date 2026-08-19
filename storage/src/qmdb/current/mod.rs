@@ -377,7 +377,7 @@ pub struct Config<T: Translator, J, S: Strategy, B = ()> {
     /// Size (in bytes) of the read buffer used to replay the log during init.
     pub init_buffer: NonZeroUsize,
 
-    /// The index's snapshot-build concurrency (see [crate::qmdb::SnapshotBuild::Concurrency]):
+    /// The index-build concurrency (see [crate::qmdb::IndexBuild::Concurrency]) --
     /// `()` for index types that build serially, and the number of build tasks (including the
     /// init task itself, which replays and routes the log, so `1` builds entirely on the init
     /// task) for index types that build in parallel.
@@ -407,7 +407,7 @@ pub type VariableConfig<T, C, S, B = ()> = Config<T, VConfig<C>, S, B>;
 #[boxed]
 pub(super) async fn init<F, E, U, H, T, I, J, const N: usize, S>(
     context: E,
-    config: Config<T, J::Config, S, <I as crate::qmdb::SnapshotBuild<F>>::Concurrency>,
+    config: Config<T, J::Config, S, <I as crate::qmdb::IndexBuild<F>>::Concurrency>,
 ) -> Result<db::Db<F, E, J, I, H, U, N, S>, crate::qmdb::Error<F>>
 where
     F: merkle::Graftable,
@@ -415,7 +415,7 @@ where
     U: Update,
     H: Hasher,
     T: Translator,
-    I: IndexFactory<T, Value = Location<F>> + crate::qmdb::SnapshotBuild<F>,
+    I: IndexFactory<T, Value = Location<F>> + crate::qmdb::IndexBuild<F>,
     J: authenticated::Backing<E, Item = Operation<F, U>> + 'static,
     S: Strategy,
     Operation<F, U>: Codec,
@@ -743,7 +743,7 @@ pub mod tests {
     }
 
     /// Shared config construction for every fixed-value flavor, generic over the index's
-    /// snapshot-build concurrency.
+    /// index-build concurrency.
     pub(crate) fn fixed_config_full<T: Translator + Default, B>(
         partition_prefix: &str,
         pooler: &impl BufferPooler,
@@ -782,7 +782,7 @@ pub mod tests {
     }
 
     /// Shared config construction for every variable-value flavor, generic over the index's
-    /// snapshot-build concurrency.
+    /// index-build concurrency.
     pub(crate) fn variable_config_full<T: Translator + Default, B>(
         partition_prefix: &str,
         pooler: &impl BufferPooler,
